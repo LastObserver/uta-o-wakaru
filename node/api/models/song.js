@@ -8,4 +8,12 @@ const SongSchema = new Schema({
   paragraphId: Schema.Types.ObjectId,
 }, { versionKey: false });
 
+SongSchema.virtual('id').get(function() {
+  return this._id.toHexString();
+});
+
+SongSchema.set('toJSON', {
+  virtuals: true,
+});
+
 module.exports = mongoose.model('Song', SongSchema);

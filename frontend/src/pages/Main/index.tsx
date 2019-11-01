@@ -1,14 +1,27 @@
 import * as React from 'react';
 import * as style from './index.css';
-import axios from 'axios';
-// import { connect } from 'react-redux';
+import { connect } from 'react-redux';
+import { getArtists } from '../../store/actions/songs';
+import { IStore } from '../../store';
+import { AnyAction } from 'redux';
+import { IArtist } from '../../typings/songs';
 
-export class MainPageContainer extends React.Component {
+export interface IMainPageDispatchToProps {
+  getArtists(): AnyAction;
+}
+
+export interface IMainPageStateToProps {
+  artists: IArtist[];
+}
+
+export type TMainPageProps = (
+  IMainPageDispatchToProps & IMainPageStateToProps
+);
+
+export class MainPage extends React.Component<TMainPageProps> {
 
   public componentDidMount() {
-    axios.get('http://localhost:4000/api/songs?artistId=5d517108e096450253b45103');
-    axios.get('http://localhost:4000/api/song?songId=5d517118e096450253b45105');
-    axios.get('http://localhost:4000/api/artists');
+    this.props.getArtists();
   }
 
   public render() {
@@ -20,6 +33,16 @@ export class MainPageContainer extends React.Component {
   }
 }
 
-// export const MainPageContainer = connect<{}, {}, {}, {}>(
-//   () => ({}), {}
-// )(MainPage);
+export const MainPageContainer = connect<
+  IMainPageStateToProps,
+  IMainPageDispatchToProps,
+  {},
+  IStore
+>(
+  (state: IStore) => ({
+    artists: state.songs.artists,
+  }),
+  {
+    getArtists,
+  }
+)(MainPage);
